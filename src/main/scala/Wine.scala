@@ -1,6 +1,4 @@
-case class Wine(name:String, location:Location, wineryName:String, rate:Double, numberOfRate:Int, price:Double, year:Int) extends Rateable
-  with Ordered[Wine] {
-  override def compare(that: Wine) = this.rate compare that.rate
+case class Wine(name:String, location:Location, wineryName:String, rate:Double, numberOfRate:Int, price:Double, year:Int, var stock:Int = 0) extends Rateable {
   override var rating: Double = rate
   override var numberOfRates: Int = numberOfRate
 

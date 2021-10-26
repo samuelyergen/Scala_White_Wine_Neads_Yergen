@@ -16,6 +16,11 @@ case class Winery(name:String, location:Location, var list:List[Wine] = null){
     li/list.length*/
   }
 
+  def totalRates(): Int ={
+    val sum = this.list.map(wine => wine.numberOfRates).sum
+    sum
+  }
+
   /*def rateAWine(rate:Double, wineName:String): Double ={
     var sum = 0.0
     val wine = this.list.find(wine => wine.name.equals(wineName))
@@ -48,6 +53,17 @@ case class Winery(name:String, location:Location, var list:List[Wine] = null){
   def addNewWine(wine:Wine): Unit ={
     val newList = wine :: this.list
     this.list = newList
+  }
+
+  def sellWine(win:Wine, number:Int): Unit ={
+    this.list.foreach(wine => if(wine.name.equals(win.name))
+      if(wine.stock < number)wine.stock = 0
+      else wine.stock = wine.stock-number)
+  }
+
+  def restock(win:Wine, number:Int): Unit ={
+    this.list.foreach(wine => if(wine.name.equals(win.name))
+      wine.stock = wine.stock+number)
   }
 
 }

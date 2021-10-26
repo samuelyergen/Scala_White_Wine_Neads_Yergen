@@ -1,24 +1,31 @@
 case class Location(country:String, region:String){
 
+  def findWineriesPerRegion(list:List[Winery]): List[Winery] ={
+    val wineries = list.map(winery => if(winery.location.region.equals(this.region))winery else null).filter(_ != null)
+    wineries
+  }
+
+  def findWineriesPerCountry(list:List[Winery]): List[Winery] ={
+    val wineries = list.map(winery => if(winery.location.country.equals(this.country))winery else null).filter(_ != null)
+    wineries
+  }
+
     def averageRatePerRegion(list:List[Winery]): Double ={
-        var sum = 0.0
-        var i = 0
-        list.foreach(winery => if(winery.location.region == this.region){
-            winery.list.foreach(wine => sum = sum + wine.rate)
-            winery.list.foreach(wine => i = i + 1)
-        })
-        val average = sum / i
-        average
+      val wineries = findWineriesPerRegion(list)
+      val wineList = wineries.map(winery => winery.list)
+      val rateList = wineList.map(list => list.map(w => w.rating).sum)
+      val lengthSum = wineList.map(list => list.length).sum
+      val sumRates = rateList.map(rate => rate).sum
+      sumRates/lengthSum
     }
 
     def numberOfRatePerRegion(list:List[Winery]): Int ={
-        var sum = 0
-        val summm = list.map(winery => if(winery.location.region == this.region)
-          winery.list.map(wine => wine.numberOfRate).sum
-        )
-       list.foreach(winery => if(winery.location.region == this.region)sum=sum+
-            winery.list.map(wine => wine.numberOfRate).sum
-        )
-        sum
+      val wineries = findWineriesPerRegion(list)
+      val wineList = wineries.map(winery => winery.list)
+      val n = wineList.map(list => list.map(w => w.numberOfRates).sum)
+      val number = n.map(n => n).sum
+      number
     }
+
+
 }
