@@ -6,7 +6,7 @@ object Launcher {
   def main(args: Array[String]): Unit = {
 
     //reader for CSV files
-    val reader = CSVReader.open(new File("C:\\ProjetTest\\WhiteWine - Copie.csv"))
+    val reader = CSVReader.open(new File("src/main/DataSet/11-WhiteWine.csv"))
 
     //make a list with the csv data and drop the first line which is header line
     val firstlist = reader.toStream.toList.drop(1)
@@ -15,11 +15,14 @@ object Launcher {
 
     //use the list from CSV file and make a list of all wines and a list of all wineries
     val winesList = firstlist.map( w => Wine(w(0), Location(w(1),w(2)), w(3), w(4).toDouble,w(5).toInt,
-      w(6).toDouble, if(w(7).equals("N.V."))0 else w(7).toInt, (Math.random()*100).toInt, if(w(6).toDouble > 30.0)true else false))
-    val wineriesList = firstlist.map(w => Winery(w(3),Location(w(1),w(2)))).distinct
+      w(6).toDouble, if(w(7).equals("N.V."))0 else w(7).toInt, (Math.random()*100+100).toInt))
+    val wineriesList = firstlist.map(winery => {
+      val filteredWineList = winesList.filter(wine => wine.wineryName.equals(winery(3)))
+      Winery(winery(3),Location(winery(1),winery(2)),filteredWineList)
+    })
 
     //create list of wines for each winery
-    wineriesList.foreach(winery => winery.list = winery.sortList(winesList))
+    //wineriesList.foreach(winery => winery.list = winery.sortList())
 
     //display all wineries of a specific region
     val terreDiChieti = Location("Italy", "Terre di Chieti")
@@ -65,7 +68,7 @@ object Launcher {
     println(" ")
 
     //find best and worst wine of Farnese winery
-    val farnese = wineriesList.find(winery => winery.name.equals("Farnese")).get
+    var farnese = wineriesList.find(winery => winery.name.equals("Farnese")).get
     val bestWine = farnese.findBestRatedWine()
     val worstWine = farnese.findWorstRatedWine()
     println("best rated wine of " + farnese.name + " winery : " +bestWine)
@@ -80,32 +83,32 @@ object Launcher {
     println(" ")
 
     //create new wine and add it to the list of Farnese Winery
-    val newWine = Wine("test",Location("test","test"),"Farnese",4.1,41,41.0,2019, 50, true)
-    farnese.addNewWine(newWine)
+    val newWine = Wine("test",Location("test","test"),"Farnese",4.1,41,41.0,2019, 50)
+    farnese = farnese.addNewWine(newWine)
     println("new list for Farnese : ")
     println(farnese.list)
     println(" ")
 
     //sell 3 bottles of the best 2018 wine of Farnese winery
     println("stock before selling : " + bestWineFor2018.stock)
-    farnese.sellWine(bestWineFor2018, 5)
-    println("stock after selling : " + bestWineFor2018.stock)
+    farnese = farnese.sellWine(bestWineFor2018, 3)
+    println("stock after selling : " + farnese.findBestRatedWinePerYear(2018).stock)
     println(" ")
 
     //restock of 3 bottles of the best 2018 wine of Farnese winery
-    println("stock before restock : " + bestWineFor2018.stock)
-    farnese.restock(bestWineFor2018, 100)
-    println("stock after restock : " + bestWineFor2018.stock)
+    println("stock before restock : " + farnese.findBestRatedWinePerYear(2018).stock)
+    farnese = farnese.restock(farnese.findBestRatedWinePerYear(2018),100)
+    println("stock after restock : " + farnese.findBestRatedWinePerYear(2018).stock)
     println(" ")
 
     //edit wine stock
-    println("stock before editing : " + bestWineFor2018.stock)
-    farnese.editWineStock(bestWineFor2018, 300)
-    println("stock after editing : " + bestWineFor2018.stock)
+    println("stock before editing : " + farnese.findBestRatedWinePerYear(2018).stock)
+    farnese = farnese.editWineStock(farnese.findBestRatedWinePerYear(2018), 300)
+    println("stock after editing : " + farnese.findBestRatedWinePerYear(2018).stock)
     println(" ")
 
     //remove a wine from the list
-    farnese.removeWine(bestWineFor2018)
+    farnese = farnese.removeWine(bestWineFor2018)
     println("new farnese list after removing a wine : ")
     println(farnese.list)
     println(" ")
@@ -113,10 +116,6 @@ object Launcher {
     //get the percentage of expensive wine to sell at Farnese
     val percentage = farnese.percentageOfExpensiveWine()
     println("percentage of expensive wine for " + farnese.name + " : " + percentage + "%")
-
-
-
-
 
   }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ScalaCompilerConfiguration">
-    <profile name="sbt 1" modules="scala_white_wine_neads_yergen" />
+    <profile name="sbt 1" modules="Scala_White_Wine_Neads_Yergen,scala_white_wine_neads_yergen" />
   </component>
 </project>
